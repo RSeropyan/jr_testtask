@@ -22,17 +22,23 @@ public class ShipService {
     }
 
     public Ship getShipById(Long id) {
+        // id is 100% not null because it has been previously checked in Controller with IdValidator
         Optional<Ship> ship = shipRepository.findById(id);
         if (ship.isPresent()) {
             return ship.get();
         }
-        throw new ShipNotFoundException();
+        else {
+            throw new ShipNotFoundException();
+        }
     }
 
     public void deleteShipById(Long id) {
-        if(id != null && shipRepository.existsById(id)) {
+        // id is 100% not null because it has been previously checked in Controller with IdValidator
+        if(shipRepository.existsById(id)) {
             shipRepository.deleteById(id);
         }
-        throw new ShipNotFoundException();
+        else {
+            throw new ShipNotFoundException();
+        }
     }
 }
