@@ -3,6 +3,7 @@ package com.space.service;
 import com.space.model.Ship;
 import com.space.model.ShipNotFoundException;
 import com.space.repository.ShipRepository;
+import com.space.service.validators.IdValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,23 +23,37 @@ public class ShipService {
     }
 
     public Ship getShipById(Long id) {
-        // id is 100% not null because it has been previously checked in Controller with IdValidator
-        Optional<Ship> ship = shipRepository.findById(id);
-        if (ship.isPresent()) {
-            return ship.get();
+
+        boolean isValid = IdValidator.isValid(id);
+        if (isValid) {
+            Optional<Ship> ship = shipRepository.findById(id);
+            if (ship.isPresent()) {
+                return ship.get();
+            }
+            else {
+                throw new ShipNotFoundException();
+            }
         }
         else {
-            throw new ShipNotFoundException();
+            throw new IllegalArgumentException();
         }
+
     }
 
     public void deleteShipById(Long id) {
-        // id is 100% not null because it has been previously checked in Controller with IdValidator
-        if(shipRepository.existsById(id)) {
-            shipRepository.deleteById(id);
+
+        boolean isValid = IdValidator.isValid(id);
+        if (isValid) {
+            if (shipRepository.existsById(id)) {
+                shipRepository.deleteById(id);
+            }
+            else {
+                throw new ShipNotFoundException();
+            }
         }
         else {
-            throw new ShipNotFoundException();
+            throw new IllegalArgumentException();
         }
+
     }
 }

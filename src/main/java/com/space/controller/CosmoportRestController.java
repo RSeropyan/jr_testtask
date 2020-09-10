@@ -3,11 +3,8 @@ package com.space.controller;
 import com.space.model.Ship;
 import com.space.model.ShipNotFoundException;
 import com.space.model.ShipType;
-import com.space.controller.validators.IdValidator;
+import com.space.service.validators.IdValidator;
 import com.space.service.ShipService;
-import org.apache.log4j.BasicConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,18 +77,16 @@ public class CosmoportRestController {
 
     @GetMapping("/ships/{id}")
     public ResponseEntity<Ship> getShipById(@PathVariable("id") Long id) {
-        if (IdValidator.isValid(id)) {
-            HttpHeaders headers = new HttpHeaders();
-            try {
-                Ship ship = shipService.getShipById(id);
-                headers.add("Cache-Control", "no-store");
-                headers.add("Content-Type", "application/json; charset=UTF-8");
-                return new ResponseEntity<>(ship, headers, HttpStatus.OK);
-            } catch (ShipNotFoundException e) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        }
-        else {
+
+        HttpHeaders headers = new HttpHeaders();
+        try {
+            Ship ship = shipService.getShipById(id);
+            headers.add("Cache-Control", "no-store");
+            headers.add("Content-Type", "application/json; charset=UTF-8");
+            return new ResponseEntity<>(ship, headers, HttpStatus.OK);
+        } catch (ShipNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -99,15 +94,13 @@ public class CosmoportRestController {
 
     @DeleteMapping("/ships/{id}")
     public ResponseEntity<Ship> deleteShipById(@PathVariable("id") Long id) {
-        if (IdValidator.isValid(id)) {
-            try {
-                shipService.deleteShipById(id);
-                return new ResponseEntity<>(HttpStatus.OK);
-            } catch (ShipNotFoundException e) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        }
-        else {
+
+        try {
+            shipService.deleteShipById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (ShipNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
