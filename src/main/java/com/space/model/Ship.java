@@ -8,7 +8,7 @@ import java.sql.Date;
 public class Ship {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
@@ -64,7 +64,7 @@ public class Ship {
     }
 
     public void setShipType(String shipType) {
-        this.shipType = ShipType.valueOf(shipType);
+        this.shipType = ShipType.valueOf(shipType.toUpperCase());
     }
 
     public Long getProdDate() {
@@ -103,13 +103,7 @@ public class Ship {
         return rating;
     }
 
-    public void calculateRating() {
-        double k = isUsed ? 0.5 : 1.0;
-        double v = speed;
-        int y0 = 3019;
-        int y1 = prodDate.getYear() + 1900;
-        double r = (80 * v * k) / (y0 - y1 + 1);
-        this.rating = Math.floor(100 * r) / 100;
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
-
 }

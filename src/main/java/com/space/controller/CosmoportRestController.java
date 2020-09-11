@@ -1,9 +1,8 @@
 package com.space.controller;
 
 import com.space.model.Ship;
-import com.space.model.ShipNotFoundException;
+import com.space.service.exceptions.ShipNotFoundException;
 import com.space.model.ShipType;
-import com.space.service.validators.IdValidator;
 import com.space.service.ShipService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -106,4 +105,18 @@ public class CosmoportRestController {
 
     }
 
+    @PostMapping("/ships")
+    public ResponseEntity<Ship> createShip(@RequestBody Ship ship) {
+
+        HttpHeaders headers = new HttpHeaders();
+        try {
+            Ship createdShip = shipService.createShip(ship);
+            headers.add("Cache-Control", "no-store");
+            headers.add("Content-Type", "application/json; charset=UTF-8");
+            return new ResponseEntity<>(createdShip, headers, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+    }
 }

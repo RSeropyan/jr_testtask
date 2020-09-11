@@ -1,4 +1,4 @@
-package com.space.model;
+package com.space.service.exceptions;
 
 public class ShipNotFoundException extends RuntimeException{
 }
