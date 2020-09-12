@@ -4,8 +4,7 @@ import com.space.model.Ship;
 import com.space.service.exceptions.ShipNotFoundException;
 import com.space.model.utils.ShipRatingCalculator;
 import com.space.repository.ShipRepository;
-import com.space.service.validators.IdValidator;
-import com.space.service.validators.ShipValidator;
+import com.space.service.validators.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,7 +60,12 @@ public class ShipService {
 
     public Ship createShip(Ship ship) {
 
-        if (ShipValidator.isValid(ship)) {
+        if (    NameValidator.isValid(ship.getName()) &&
+                PlanetValidator.isValid(ship.getPlanet()) &&
+                ProdDateValidator.isValid(ship.getProdDate()) &&
+                SpeedValidator.isValid(ship.getSpeed()) &&
+                CrewSizeValidator.isValid(ship.getCrewSize())
+            ) {
             Ship newShip = new Ship();
 
             String name = ship.getName();
@@ -103,4 +107,8 @@ public class ShipService {
 
     }
 
+    public Ship updateShipById(Long id, Ship modifiedShip) {
+
+        return null;
+    }
 }

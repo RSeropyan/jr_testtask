@@ -111,12 +111,25 @@ public class CosmoportRestController {
         HttpHeaders headers = new HttpHeaders();
         try {
             Ship createdShip = shipService.createShip(ship);
-            headers.add("Cache-Control", "no-store");
             headers.add("Content-Type", "application/json; charset=UTF-8");
             return new ResponseEntity<>(createdShip, headers, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @PostMapping("/ships/{id}")
+    public ResponseEntity<Ship> updateShip(@PathVariable("id") Long id, @RequestBody Ship modifiedShip) {
+        HttpHeaders headers = new HttpHeaders();
+        try {
+            Ship ship = shipService.updateShipById(id, modifiedShip);
+            headers.add("Content-Type", "application/json; charset=UTF-8");
+            return new ResponseEntity<>(ship, headers, HttpStatus.OK);
+        } catch (ShipNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }
