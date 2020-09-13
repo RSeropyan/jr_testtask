@@ -1,10 +1,12 @@
 package com.space.service;
 
 import com.space.model.Ship;
-import com.space.service.exceptions.ShipNotFoundException;
 import com.space.model.utils.ShipRatingCalculator;
 import com.space.repository.ShipRepository;
+import com.space.service.exceptions.ShipNotFoundException;
 import com.space.service.validators.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,14 +21,17 @@ public class ShipService {
         this.shipRepository = shipRepository;
     }
 
-    public List<Ship> getAllShips() {
-        return shipRepository.findAll();
+    public List<Ship> getAllShips(Integer pageNumber, Integer pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return shipRepository.findAll(pageable).getContent();
+
     }
 
     public Ship getShipById(Long id) {
 
-        boolean isValid = IdValidator.isValid(id);
-        if (isValid) {
+        boolean isIdValid = IdValidator.isValid(id);
+        if (isIdValid) {
             Optional<Ship> ship = shipRepository.findById(id);
             if (ship.isPresent()) {
                 return ship.get();
@@ -43,8 +48,8 @@ public class ShipService {
 
     public void deleteShipById(Long id) {
 
-        boolean isValid = IdValidator.isValid(id);
-        if (isValid) {
+        boolean isIdValid = IdValidator.isValid(id);
+        if (isIdValid) {
             if (shipRepository.existsById(id)) {
                 shipRepository.deleteById(id);
             }
@@ -109,6 +114,87 @@ public class ShipService {
 
     public Ship updateShipById(Long id, Ship modifiedShip) {
 
-        return null;
+        boolean isIdValid = IdValidator.isValid(id);
+        if (isIdValid) {
+            Optional<Ship> ship = shipRepository.findById(id);
+            if (ship.isPresent()) {
+                Ship updatedShip = ship.get();
+
+                if(modifiedShip.getName() != null) {
+                    String name = modifiedShip.getName();
+                    if (NameValidator.isValid(name)) {
+                        updatedShip.setName(name);
+                    }
+                    else {
+                        throw new IllegalArgumentException();
+                    }
+                }
+
+                if (modifiedShip.getPlanet() != null) {
+                    String planet = modifiedShip.getPlanet();
+                    if (PlanetValidator.isValid(planet)) {
+                        updatedShip.setPlanet(planet);
+                    }
+                    else {
+                        throw new IllegalArgumentException();
+                    }
+                }
+
+                if (modifiedShip.getShipType() != null) {
+                    String shipType = modifiedShip.getShipType();
+                    updatedShip.setShipType(shipType);
+                }
+
+                Long prodDate = updatedShip.getProdDate();
+                if (modifiedShip.getProdDate() != null) {
+                    prodDate = modifiedShip.getProdDate();
+                    if (ProdDateValidator.isValid(prodDate)) {
+                        updatedShip.setProdDate(prodDate);
+                    }
+                    else {
+                        throw new IllegalArgumentException();
+                    }
+                }
+
+                Boolean isUsed = updatedShip.getIsUsed();
+                if (modifiedShip.getIsUsed() != null) {
+                    isUsed = modifiedShip.getIsUsed();
+                    updatedShip.setIsUsed(isUsed);
+                }
+
+                Double speed = updatedShip.getSpeed();
+                if (modifiedShip.getSpeed() != null) {
+                    speed = modifiedShip.getSpeed();
+                    if (SpeedValidator.isValid(speed)) {
+                        updatedShip.setSpeed(speed);
+                    }
+                    else {
+                        throw new IllegalArgumentException();
+                    }
+                }
+
+                if (modifiedShip.getCrewSize() != null) {
+                    Integer crewSize = modifiedShip.getCrewSize();
+                    if (CrewSizeValidator.isValid(crewSize)) {
+                        updatedShip.setCrewSize(crewSize);
+                    }
+                    else {
+                        throw new IllegalArgumentException();
+                    }
+                }
+
+                Double rating = ShipRatingCalculator.calculate(isUsed, speed, prodDate);
+                updatedShip.setRating(rating);
+
+                return updatedShip;
+            }
+            else {
+                throw new ShipNotFoundException();
+            }
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
+
     }
 }

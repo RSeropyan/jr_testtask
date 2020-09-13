@@ -41,7 +41,7 @@ public class CosmoportRestController {
             @RequestParam(required = false, defaultValue = "3") Integer pageSize
             ) {
 
-        List<Ship> ships = shipService.getAllShips();
+        List<Ship> ships = shipService.getAllShips(pageNumber, pageSize);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=UTF-8");
@@ -66,7 +66,7 @@ public class CosmoportRestController {
             @RequestParam(required = false) Double maxRating
     ) {
 
-        List<Ship> ships = shipService.getAllShips();
+        List<Ship> ships = shipService.getAllShips(0, 3);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-store");

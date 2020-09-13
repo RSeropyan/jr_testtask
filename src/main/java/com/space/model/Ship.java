@@ -60,7 +60,12 @@ public class Ship {
     }
 
     public String getShipType() {
-        return shipType.name();
+        if (shipType != null) {
+            return shipType.name();
+        }
+        else {
+            return null;
+        }
     }
 
     public void setShipType(String shipType) {
@@ -68,7 +73,12 @@ public class Ship {
     }
 
     public Long getProdDate() {
-        return prodDate.getTime();
+        if (prodDate != null) {
+            return prodDate.getTime();
+        }
+        else {
+            return null;
+        }
     }
 
     public void setProdDate(Long prodDate) {
