@@ -1,5 +1,6 @@
 package com.space.service;
 
+import com.space.controller.ShipOrder;
 import com.space.model.Ship;
 import com.space.model.utils.ShipRatingCalculator;
 import com.space.repository.ShipRepository;
@@ -7,6 +8,7 @@ import com.space.service.exceptions.ShipNotFoundException;
 import com.space.service.validators.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +23,17 @@ public class ShipService {
         this.shipRepository = shipRepository;
     }
 
-    public List<Ship> getAllShips(Integer pageNumber, Integer pageSize) {
+    public List<Ship> getAllShipsPageable(Integer pageNumber, Integer pageSize, ShipOrder order) {
 
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        String sortingOrder = (order != null ? order.getFieldName() : "id");
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortingOrder));
         return shipRepository.findAll(pageable).getContent();
+
+    }
+
+    public List<Ship> getAllShips() {
+
+        return shipRepository.findAll();
 
     }
 

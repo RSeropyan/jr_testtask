@@ -4,6 +4,9 @@ import com.space.model.Ship;
 import com.space.service.exceptions.ShipNotFoundException;
 import com.space.model.ShipType;
 import com.space.service.ShipService;
+import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +21,11 @@ public class CosmoportRestController {
 
     private final ShipService shipService;
 
+    private static final Logger logger = LoggerFactory.getLogger(com.space.controller.CosmoportRestController.class);
+
     public CosmoportRestController(ShipService shipService) {
         this.shipService = shipService;
+        BasicConfigurator.configure();
     }
 
     @GetMapping("/ships")
@@ -41,7 +47,7 @@ public class CosmoportRestController {
             @RequestParam(required = false, defaultValue = "3") Integer pageSize
             ) {
 
-        List<Ship> ships = shipService.getAllShips(pageNumber, pageSize);
+        List<Ship> ships = shipService.getAllShipsPageable(pageNumber, pageSize, order);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=UTF-8");
@@ -66,7 +72,7 @@ public class CosmoportRestController {
             @RequestParam(required = false) Double maxRating
     ) {
 
-        List<Ship> ships = shipService.getAllShips(0, 3);
+        List<Ship> ships = shipService.getAllShips();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-store");
