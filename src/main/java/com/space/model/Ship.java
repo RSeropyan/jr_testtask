@@ -2,6 +2,7 @@ package com.space.model;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Calendar;
 
 @Entity
 @Table(name="ship", schema="cosmoport")

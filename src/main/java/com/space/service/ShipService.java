@@ -2,9 +2,11 @@ package com.space.service;
 
 import com.space.controller.ShipOrder;
 import com.space.model.Ship;
+import com.space.model.ShipType;
 import com.space.model.utils.ShipRatingCalculator;
 import com.space.repository.ShipRepository;
 import com.space.service.exceptions.ShipNotFoundException;
+import com.space.service.specifications.*;
 import com.space.service.validators.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 public class ShipService {
@@ -23,17 +27,61 @@ public class ShipService {
         this.shipRepository = shipRepository;
     }
 
-    public List<Ship> getAllShipsPageable(Integer pageNumber, Integer pageSize, ShipOrder order) {
+    public List<Ship> getAllShips(
+            String name,
+            String planet,
+            ShipType shipType,
+            Long after,
+            Long before,
+            Boolean isUsed,
+            Double minSpeed,
+            Double maxSpeed,
+            Integer minCrewSize,
+            Integer maxCrewSize,
+            Double minRating,
+            Double maxRating,
+            ShipOrder order,
+            Integer pageNumber,
+            Integer pageSize
+    ) {
 
-        String sortingOrder = (order != null ? order.getFieldName() : "id");
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortingOrder));
-        return shipRepository.findAll(pageable).getContent();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(order.getFieldName()));
+
+        return shipRepository.findAll(
+                where(ShipNameSpecification.isEqualToName(name))
+                .and(ShipTypeSpecification.isEqualToShipType(shipType))
+                .and(ShipProdDateSpecification.isGreaterThanOrEqualToMinDate(after))
+                .and(ShipProdDateSpecification.isLessThanOrEqualToMaxDate(before))
+                .and(ShipPlanetSpecification.isEqualToPlanet(planet))
+                .and(ShipIsUsedSpecification.isEqualToIsUsed(isUsed))
+                .and(ShipSpeedSpecifications.isGreaterThanOrEqualToMinSpeed(minSpeed))
+                .and(ShipSpeedSpecifications.isLessThanOrEqualToMaxSpeed(maxSpeed))
+                .and(ShipCrewSizeSpecification.isGreaterThanOrEqualToMinCrewSize(minCrewSize))
+                .and(ShipCrewSizeSpecification.isLessThanOrEqualToMaxCrewSize(maxCrewSize))
+                .and(ShipRatingSpecification.isGreaterThanOrEqualToMinRating(minRating))
+                .and(ShipRatingSpecification.isLessThanOrEqualToMaxRating(maxRating))
+                , pageable).getContent();
 
     }
 
-    public List<Ship> getAllShips() {
+    public Integer getAllShipsCount(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpeed, Double maxSpeed, Integer minCrewSize, Integer maxCrewSize, Double minRating, Double maxRating) {
 
-        return shipRepository.findAll();
+        List<Ship> ships = shipRepository.findAll(
+                where(ShipNameSpecification.isEqualToName(name))
+                        .and(ShipTypeSpecification.isEqualToShipType(shipType))
+                        .and(ShipProdDateSpecification.isGreaterThanOrEqualToMinDate(after))
+                        .and(ShipProdDateSpecification.isLessThanOrEqualToMaxDate(before))
+                        .and(ShipPlanetSpecification.isEqualToPlanet(planet))
+                        .and(ShipIsUsedSpecification.isEqualToIsUsed(isUsed))
+                        .and(ShipSpeedSpecifications.isGreaterThanOrEqualToMinSpeed(minSpeed))
+                        .and(ShipSpeedSpecifications.isLessThanOrEqualToMaxSpeed(maxSpeed))
+                        .and(ShipCrewSizeSpecification.isGreaterThanOrEqualToMinCrewSize(minCrewSize))
+                        .and(ShipCrewSizeSpecification.isLessThanOrEqualToMaxCrewSize(maxCrewSize))
+                        .and(ShipRatingSpecification.isGreaterThanOrEqualToMinRating(minRating))
+                        .and(ShipRatingSpecification.isLessThanOrEqualToMaxRating(maxRating))
+                , Pageable.unpaged()).getContent();
+
+        return ships.size();
 
     }
 

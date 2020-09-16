@@ -35,19 +35,19 @@ public class CosmoportRestController {
             @RequestParam(required = false) ShipType shipType,
             @RequestParam(required = false) Long after,
             @RequestParam(required = false) Long before,
-            @RequestParam(required = false, defaultValue = "false") Boolean isUsed,
+            @RequestParam(required = false) Boolean isUsed,
             @RequestParam(required = false) Double minSpeed,
             @RequestParam(required = false) Double maxSpeed,
             @RequestParam(required = false) Integer minCrewSize,
             @RequestParam(required = false) Integer maxCrewSize,
             @RequestParam(required = false) Double minRating,
             @RequestParam(required = false) Double maxRating,
-            @RequestParam(required = false) ShipOrder order,
+            @RequestParam(required = false, defaultValue = "ID") ShipOrder order,
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(required = false, defaultValue = "3") Integer pageSize
             ) {
 
-        List<Ship> ships = shipService.getAllShipsPageable(pageNumber, pageSize, order);
+        List<Ship> ships = shipService.getAllShips(name, planet, shipType, after, before, isUsed, minSpeed, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating, order, pageNumber, pageSize);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=UTF-8");
@@ -63,7 +63,7 @@ public class CosmoportRestController {
             @RequestParam(required = false) ShipType shipType,
             @RequestParam(required = false) Long after,
             @RequestParam(required = false) Long before,
-            @RequestParam(required = false, defaultValue = "false") Boolean isUsed,
+            @RequestParam(required = false) Boolean isUsed,
             @RequestParam(required = false) Double minSpeed,
             @RequestParam(required = false) Double maxSpeed,
             @RequestParam(required = false) Integer minCrewSize,
@@ -72,12 +72,13 @@ public class CosmoportRestController {
             @RequestParam(required = false) Double maxRating
     ) {
 
-        List<Ship> ships = shipService.getAllShips();
+        Integer numberOfShips = shipService.getAllShipsCount(name, planet, shipType, after, before, isUsed, minSpeed, maxSpeed, minCrewSize, maxCrewSize, minRating, maxRating);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-store");
 
-        return new ResponseEntity<>(ships.size(), headers, HttpStatus.OK);
+        return new ResponseEntity<>(numberOfShips, headers, HttpStatus.OK);
+
     }
 
     @GetMapping("/ships/{id}")

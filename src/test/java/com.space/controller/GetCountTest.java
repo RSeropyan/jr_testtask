@@ -26,7 +26,6 @@ public class GetCountTest extends AbstractTest {
         String contentAsString = result.getResponse().getContentAsString();
         int actual = Integer.parseInt(contentAsString);
         int expected = testsHelper.getAllShips().size();
-
         assertSame("Возвращается не правильный результат при запросе GET /rest/ships/count.", expected, actual);
     }
 
