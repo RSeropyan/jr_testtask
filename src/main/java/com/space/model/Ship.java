@@ -1,6 +1,8 @@
 package com.space.model;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.util.Calendar;
 
@@ -100,6 +102,8 @@ public class Ship {
 
     public void setSpeed(Double speed) {
         this.speed = Math.floor(100 * speed) / 100;
+        BigDecimal bd = new BigDecimal(Double.toString(speed));
+        this.speed = bd.setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     public Integer getCrewSize() {

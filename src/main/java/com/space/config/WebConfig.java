@@ -52,9 +52,9 @@ public class WebConfig implements WebMvcConfigurer {
         converters.add(converter);
     }
 
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new StringToShipOrderEnumConverter());
-    }
+//    @Override
+//    public void addFormatters(FormatterRegistry registry) {
+//        registry.addConverter(new StringToShipOrderEnumConverter());
+//    }
 
 }
