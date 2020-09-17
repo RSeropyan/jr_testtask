@@ -4,10 +4,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
-import java.util.Calendar;
 
 @Entity
-@Table(name="ship", schema="cosmoport")
+@Table(name="ship")
 public class Ship {
 
     @Id
